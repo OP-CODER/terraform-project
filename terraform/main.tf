@@ -2,7 +2,7 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_instance" "frontend" {
+resource "aws_instance" "c8" {
   ami           = "ami-085386e29e44dacd7"
   instance_type = "t2.micro"
   key_name      = var.public_key
@@ -16,7 +16,7 @@ resource "aws_instance" "frontend" {
   }
 }
 
-resource "aws_instance" "backend" {
+resource "aws_instance" "u21" {
   ami           = "ami-0f9de6e2d2f067fca"
   instance_type = "t2.micro"
   key_name      = var.public_key
