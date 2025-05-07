@@ -1,7 +1,6 @@
-output "frontend_ip" {
-  value = aws_instance.frontend.public_ip
-}
-
-output "backend_ip" {
-  value = aws_instance.backend.public_ip
-}
+output "inventory" {
+  value = <<EOT
+[frontend]
+c9.local ansible_host=${aws_instance.r9.public_ip}
+[backend]
+u21.local ansible_host=${aws_instance.d12.public_ip}
