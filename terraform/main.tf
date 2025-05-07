@@ -29,3 +29,10 @@ resource "aws_instance" "backend" {
     command = "echo ${self.public_ip} > ../ansible/backend_ip.txt"
   }
 }
+# Output IP addresses for Ansible inventory
+output "c8_ip" {
+  value = aws_instance.c8.public_ip
+}
+output "u21_ip" {
+  value = aws_instance.u21.public_ip
+}
