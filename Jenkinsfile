@@ -1,8 +1,8 @@
 pipeline {
     agent any
     tools {
-        terraform 'Terraform'  // This should match the name you provided in the tool configuration
-        ansible 'Ansible'      // This should match the name you provided in the tool configuration
+        terraform 'Terraform'  // Ensure this matches the name you provided in the tool configuration
+        ansible 'Ansible'      // Ensure this matches the name you provided in the tool configuration
     }
     environment {
         AWS_DEFAULT_REGION = 'us-east-1'
@@ -18,8 +18,13 @@ pipeline {
         stage('Terraform Apply') {
             steps {
                 dir('terraform') {
-                    sh 'terraform init'
-                    sh 'terraform apply -auto-approve'
+                    sh '''
+                        export AWS_ACCESS_KEY_ID=AKIAQZHMQCF6NLNRQ7PY
+                        export AWS_SECRET_ACCESS_KEY=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
+                        export AWS_DEFAULT_REGION=us-east-1
+                        terraform init
+                        terraform apply -auto-approve
+                    '''
                 }
             }
         }
