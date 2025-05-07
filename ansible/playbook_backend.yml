@@ -1,27 +1,24 @@
-- name: Configure backend (Ubuntu)
-  hosts: backend
-  become: true
-  tasks:
-    - name: Disable SELinux (Ubuntu doesn't use it, so skip)
-      command: echo "SELinux not applicable on Ubuntu"
-      changed_when: false
+---
+- name: Install Netdata from the official repository
+  ansible.builtin.apt:
+    name: netdata
+    state: present
+  when: ansible_facts['distribution'] == 'Ubuntu'
 
-    - name: Disable firewalld
-      apt:
-        name: ufw
-        state: absent
+- name: Install Netdata from the official repository
+  ansible.builtin.yum:
+    name: netdata
+    state: present
+  when: ansible_facts['distribution'] == 'Amazon'
 
-    - name: Update apt cache
-      apt:
-        update_cache: yes
+- name: Configure Netdata to listen on port 19999
+  ansible.builtin.lineinfile:
+    path: /etc/netdata/netdata.conf
+    regexp: '^#http port ='
+    line: 'http port = 19999'
 
-    - name: Install Netdata
-      apt:
-        name: netdata
-        state: present
-
-    - name: Ensure Netdata is running
-      service:
-        name: netdata
-        state: started
-        enabled: yes
+- name: Ensure Netdata service is started and enabled
+  ansible.builtin.systemd:
+    name: netdata
+    state: started
+    enabled: yes
