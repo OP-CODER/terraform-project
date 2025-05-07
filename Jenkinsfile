@@ -1,8 +1,8 @@
 pipeline {
     agent any
     tools {
-        terraform 'terraform'
-        ansible 'ansible'
+        terraform 'Terraform'  // This should match the name you provided in the tool configuration
+        ansible 'Ansible'      // This should match the name you provided in the tool configuration
     }
     environment {
         AWS_DEFAULT_REGION = 'us-east-1'
