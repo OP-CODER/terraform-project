@@ -1,14 +1,25 @@
-- name: Enable Amazon Linux Extra for NGINX
-  command: amazon-linux-extras enable nginx1
-  when: ansible_distribution == "Amazon"
-
-- name: Install NGINX
-  package:
-    name: nginx
-    state: present
-
-- name: Start and enable NGINX
-  service:
-    name: nginx
-    state: started
-    enabled: true
+---
+- name: Configure frontend servers
+  hosts: frontend
+  become: yes
+  vars:
+    backend_server: "{{ groups['backend'][0] }}"
+  tasks:
+    - name: Update all packages
+      apt:
+        name: '*'
+        state: latest
+    - name: Install NGINX
+      dnf:
+        name: nginx
+        state: present
+    - name: Configure NGINX proxy
+      template:
+        src: ./nginx.conf
+        dest: /etc/nginx/nginx.conf
+      notify: restart nginx
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
