@@ -3,7 +3,7 @@
   hosts: frontend
   become: yes
   vars:
-    backend_server: "35.175.190.0"
+    backend_server: "{{ hostvars[groups['backend'][0]]['ansible_host'] }}"
   tasks:
     - name: Update all packages
       yum:
