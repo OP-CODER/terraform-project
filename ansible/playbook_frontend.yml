@@ -3,7 +3,7 @@
   hosts: frontend
   become: yes
   vars:
-    backend_server: "{{ hostvars['u21']['ansible_host'] }}"
+    backend_server: 18.205.24.226
   tasks:
     - name: Update all packages
       yum:
