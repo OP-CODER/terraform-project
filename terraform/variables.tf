@@ -3,5 +3,5 @@ variable "region" {
 }
 variable "public_key" {
   type    = string
-  default = "merichaabi"
+  default = "jenkins-tf"
 }
