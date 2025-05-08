@@ -3,7 +3,7 @@
   hosts: frontend
   become: yes
   vars:
-    backend_server: "{{ groups['backend'][0] }}"
+    backend_server: "35.175.190.0"
   tasks:
     - name: Update all packages
       yum:
