@@ -1,33 +1,31 @@
----
-- name: Configure frontend servers
-  hosts: frontend
-  become: yes
-  vars:
-    backend_server: "{{ hostvars[groups['backend'][0]]['ansible_host'] }}"
-  tasks:
-    - name: Update all packages
-      yum:
-        name: '*'
-        state: latest
+provider "aws" {
+  region = "us-east-1"
+}
 
-    - name: Enable nginx via amazon-linux-extras
-      command: amazon-linux-extras enable nginx1
-      args:
-        creates: /etc/yum.repos.d/amzn2extra-nginx1.repo
+resource "aws_instance" "frontend" {
+  ami           = "ami-0f9de6e2d2f067fca"
+  instance_type = "t2.micro"
+  key_name      = "k8s"
 
-    - name: Install NGINX
-      yum:
-        name: nginx
-        state: present
+  tags = {
+    Name = "c8.local"
+  }
 
-    - name: Configure NGINX proxy
-      template:
-        src: nginx_conf
-        dest: /etc/nginx/nginx.conf
-      notify: restart nginx
+  provisioner "local-exec" {
+    command = "echo ${self.public_ip} > ../ansible/frontend_ip.txt"
+  }
+}
 
-  handlers:
-    - name: restart nginx
-      service:
-        name: nginx
-        state: restarted
+resource "aws_instance" "backend" {
+  ami           = "ami-085386e29e44dacd7"
+  instance_type = "t2.micro"
+  key_name      = "k8s"
+
+  tags = {
+    Name = "u21.local"
+  }
+
+  provisioner "local-exec" {
+    command = "echo ${self.public_ip} > ../ansible/backend_ip.txt"
+  }
+}
