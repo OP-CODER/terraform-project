@@ -1,25 +1,28 @@
-provider "aws" {
-  region = "us-east-1"
-}
-resource "aws_instance" "frontend" {
-  ami           = "ami-085386e29e44dacd7"
-  instance_type = "t2.micro"
-  key_name      = "jenkins-tf"
-  tags = {
-    Name = "c8.local"
-  }
-  provisioner "local-exec" {
-    command = "echo ${self.public_ip} > ../ansible/frontend_ip.txt"
-  }
-}
-resource "aws_instance" "backend" {
-  ami           = "ami-0f9de6e2d2f067fca"
-  instance_type = "t2.micro"
-  key_name      = "jenkins-tf"
-  tags = {
-    Name = "u21.local"
-  }
-  provisioner "local-exec" {
-    command = "echo ${self.public_ip} > ../ansible/backend_ip.txt"
-  }
-}
+---
+- name: Configure frontend servers
+  hosts: frontend
+  become: yes
+  vars:
+    backend_server: "{{ hostvars[groups['backend'][0]]['ansible_host'] }}"
+  tasks:
+    - name: Update all packages
+      dnf:
+        name: '*'
+        state: latest
+
+    - name: Install NGINX
+      dnf:
+        name: nginx
+        state: present
+
+    - name: Configure NGINX proxy
+      template:
+        src: ./nginx.conf
+        dest: /etc/nginx/nginx.conf
+      notify: restart nginx
+
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
