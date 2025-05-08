@@ -1,24 +1,29 @@
 ---
-- name: Install Netdata from the official repository
-  ansible.builtin.apt:
-    name: netdata
-    state: present
-  when: ansible_facts['distribution'] == 'Ubuntu'
+- name: Configure Netdata on backend server (Ubuntu 24.04 or Amazon Linux)
+  hosts: backend
+  become: yes
+  tasks:
+    - name: Install Netdata on Ubuntu
+      ansible.builtin.apt:
+        name: netdata
+        state: present
+        update_cache: yes
+      when: ansible_facts['distribution'] == 'Ubuntu'
 
-- name: Install Netdata from the official repository
-  ansible.builtin.yum:
-    name: netdata
-    state: present
-  when: ansible_facts['distribution'] == 'Amazon'
+    - name: Install Netdata on Amazon Linux
+      ansible.builtin.yum:
+        name: netdata
+        state: present
+      when: ansible_facts['distribution'] == 'Amazon'
 
-- name: Configure Netdata to listen on port 19999
-  ansible.builtin.lineinfile:
-    path: /etc/netdata/netdata.conf
-    regexp: '^#http port ='
-    line: 'http port = 19999'
+    - name: Configure Netdata to listen on port 19999
+      ansible.builtin.lineinfile:
+        path: /etc/netdata/netdata.conf
+        regexp: '^#? *http port *=.*'
+        line: 'http port = 19999'
 
-- name: Ensure Netdata service is started and enabled
-  ansible.builtin.systemd:
-    name: netdata
-    state: started
-    enabled: yes
+    - name: Ensure Netdata service is started and enabled
+      ansible.builtin.systemd:
+        name: netdata
+        state: started
+        enabled: yes
