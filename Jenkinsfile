@@ -40,8 +40,8 @@ pipeline {
 
         stage('Configure VMs') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key-ubuntu', keyFileVariable: 'UBUNTU_KEY'),
-                                 sshUserPrivateKey(credentialsId: 'ssh-key-amazon', keyFileVariable: 'AMAZON_KEY')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: 'ubuntu1', keyFileVariable: 'UBUNTU_KEY'),
+                                 sshUserPrivateKey(credentialsId: 'ec2-user1', keyFileVariable: 'AMAZON_KEY')]) {
                     dir('ansible') {
                         sh '''
                             chmod 600 $UBUNTU_KEY $AMAZON_KEY
