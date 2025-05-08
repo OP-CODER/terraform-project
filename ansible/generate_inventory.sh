@@ -1,9 +1,12 @@
 #!/bin/bash
-FRONTEND_IP=$(terraform -chdir=../terraform output -raw frontend_ip)
-BACKEND_IP=$(terraform -chdir=../terraform output -raw backend_ip)
-cat <<EOF > inventory.ini
+
+FRONTEND_IP=$(terraform output -raw frontend_public_ip)
+BACKEND_IP=$(terraform output -raw backend_public_ip)
+
+cat > inventory.ini <<EOF
 [frontend]
-c8.local ansible_host=$FRONTEND_IP ansible_user=ec2-user
+c8.local ansible_host=${FRONTEND_IP}
+
 [backend]
-u21.local ansible_host=$BACKEND_IP ansible_user=ubuntu
+u21.local ansible_host=${BACKEND_IP}
 EOF
