@@ -6,18 +6,21 @@
     backend_server: "{{ groups['backend'][0] }}"
   tasks:
     - name: Update all packages
-      apt:
+      yum:
         name: '*'
         state: latest
+
     - name: Install NGINX
-      dnf:
+      yum:
         name: nginx
         state: present
+
     - name: Configure NGINX proxy
       template:
         src: ./nginx.conf
         dest: /etc/nginx/nginx.conf
       notify: restart nginx
+
   handlers:
     - name: restart nginx
       service:
