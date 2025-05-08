@@ -3,7 +3,7 @@
   hosts: frontend
   become: yes
   vars:
-    backend_server: backend_server: "{{ hostvars['u21']['ansible_host'] }}"
+    backend_server: "{{ hostvars['u21']['ansible_host'] }}"
   tasks:
     - name: Update all packages
       yum:
