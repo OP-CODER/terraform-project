@@ -6,18 +6,23 @@
     backend_server: "{{ hostvars[groups['backend'][0]]['ansible_host'] }}"
   tasks:
     - name: Update all packages
-      dnf:
+      yum:
         name: '*'
         state: latest
 
+    - name: Enable nginx via amazon-linux-extras
+      command: amazon-linux-extras enable nginx1
+      args:
+        creates: /etc/yum.repos.d/amzn2extra-nginx1.repo
+
     - name: Install NGINX
-      dnf:
+      yum:
         name: nginx
         state: present
 
     - name: Configure NGINX proxy
       template:
-        src: ./nginx.conf
+        src: nginx_conf
         dest: /etc/nginx/nginx.conf
       notify: restart nginx
 
